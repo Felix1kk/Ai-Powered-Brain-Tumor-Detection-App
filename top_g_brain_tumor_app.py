@@ -8,13 +8,8 @@ Original file is located at
 """
 
 
-
-!pip install -q -U google_generativeai
-
-!pip install streamlit
-
 # Commented out IPython magic to ensure Python compatibility.
-# %%writefile app.py
+
 # import streamlit as st
 # import google.generativeai as genai
 # from PIL import Image
