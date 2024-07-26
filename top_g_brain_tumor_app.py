@@ -17,14 +17,14 @@ from PIL import Image
 API_KEY='AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
 genai.configure(api_key=API_KEY)
  
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 chat = model.start_chat(history=[])
  
  
 def get_gemini_response(input,image,prompt):
   #Loading the Gemini Model
  
-  model=genai.GenerativeModel('gemini-pro-vision')
+  model=genai.GenerativeModel('gemini-1.5-flash')
   response=model.generate_content([input,image[0],prompt])
   return response.text
 # 
