@@ -17,6 +17,7 @@ from PIL import Image
 # Configuration
 API_KEY = 'AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
 MODEL_NAME = 'gemini-1.5-flash'
+
 INPUT_PROMPT = """
 You are an expert in understanding MRI images of the brain. 
 You will receive input images as MRI images of the brain, 
@@ -29,6 +30,7 @@ model = genai.GenerativeModel(MODEL_NAME)
 chat = model.start_chat(history=[])
 
 # Functions
+
 def get_gemini_response(input_text, images, prompt):
     response = model.generate_content([input_text] + images + [prompt])
     return response.text
