@@ -13,69 +13,67 @@ Original file is located at
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
- 
-API_KEY='AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
-genai.configure(api_key=API_KEY)
- 
-model = genai.GenerativeModel('gemini-1.5-flash')
-chat = model.start_chat(history=[])
- 
- 
-def get_gemini_response(input,image,prompt):
-  #Loading the Gemini Model
- 
-  model=genai.GenerativeModel('gemini-1.5-flash')
-  response=model.generate_content([input,image[0],prompt])
-  return response.text
-# 
-# 
-def input_image_setup(uploaded_file):
-   if uploaded_file is not None:
-     # Read the file into bytes
-     bytes_data =uploaded_file.getvalue()
-# 
-     image_parts =[
-         {
-             "mime_type": uploaded_file.type,
-             "data": bytes_data
-         }
-     ]
-     return image_parts
-   else :
-     raise FileNotFoundError("No file uploaded")
- 
- 
-st.set_page_config(page_title="Brain Tumor detection")
- 
- # Building the streamlit application
- 
-st.header("Top G Brain Tumor App 🧠")
- 
-uploaded_file=st.file_uploader("choose an image...",type=["jpg","jpeg","png"])
- 
-image=""
-if uploaded_file is not None:
-  image=Image.open(uploaded_file)
-  st.image(image,caption="uploaded Image.",use_column_width=True)
- 
-input=st.text_input("input prompt: ",key="input")
- 
-submit=st.button("Tell me about the tumor")
- 
-input_prompt="""
-You are an expert in understanding Mri images. You wil
-receive input images as mri images of the brain and you will have to
-classify what type of tumor it is. if it is not a tumor return No tumor
-"""
-if submit and uploaded_file is None or uploaded_file=="":
-  st.info("Please upload an Image")
 
-elif submit and uploaded_file is not None:
-  image_data=input_image_setup(uploaded_file)
-  response=get_gemini_response(input_prompt,image_data,input)
- 
-  st.subheader("The Response is")
-  st.write(response)
+# Configuration
+API_KEY = 'AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
+MODEL_NAME = 'gemini-1.5-flash'
+INPUT_PROMPT = """
+You are an expert in understanding MRI images of the brain. 
+You will receive input images as MRI images of the brain, 
+and you will describe any visual features that might indicate abnormalities or tumor-like structures. 
+Please focus on describing shapes, spots, patterns, or any unusual characteristics you observe.
+"""
+
+genai.configure(api_key=API_KEY)
+model = genai.GenerativeModel(MODEL_NAME)
+chat = model.start_chat(history=[])
+
+# Functions
+def get_gemini_response(input_text, images, prompt):
+    response = model.generate_content([input_text] + images + [prompt])
+    return response.text
+
+def input_image_setup(uploaded_files):
+    if uploaded_files:
+        image_parts = [
+            {
+                "mime_type": uploaded_file.type,
+                "data": uploaded_file.getvalue()
+            }
+            for uploaded_file in uploaded_files
+        ]
+        return image_parts
+    else:
+        raise FileNotFoundError("No files uploaded")
+
+# Streamlit App Configuration
+st.set_page_config(page_title="Brain Tumor Detection")
+
+# Streamlit App
+st.header("Top G Brain Tumor App 🧠")
+
+uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+
+if uploaded_files:
+    for uploaded_file in uploaded_files:
+        image = Image.open(uploaded_file)
+        st.image(image, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
+
+input_text = st.text_input("Input prompt:", key="input")
+
+submit = st.button("Tell me about the tumor")
+
+if submit:
+    if not uploaded_files:
+        st.info("Please upload at least one image")
+    else:
+        try:
+            image_data = input_image_setup(uploaded_files)
+            response = get_gemini_response(input_text, image_data, INPUT_PROMPT)
+            st.subheader("The Response is")
+            st.write(response)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
  
 # 
 # 
