@@ -18,26 +18,10 @@ from PIL import Image
 
 st.set_page_config(
     page_title="Brain Tumor Detection",
-    page_icon="🧠",
-    menu_items={
-        'Get Help': None,
-        'Report a bug': None,
-        'About': None
-    }
+    page_icon="🧠"
 )
 
-# Custom CSS to hide GitHub and Fork icons
-hide_streamlit_style = """
-<style>
 
-footer {visibility: hidden;}
-header {visibility: hidden;}
-.stApp {padding-top: 0;}
-</style>
-"""
-
-# Inject custom CSS
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Streamlit App
 st.header("Top G Brain Tumor App 🧠")
