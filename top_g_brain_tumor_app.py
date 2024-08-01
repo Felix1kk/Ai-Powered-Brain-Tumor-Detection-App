@@ -62,16 +62,7 @@ footer {visibility: hidden;}
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Streamlit App Configuration
-
-
-st.set_page_config(
-    page_title="Brain Tumor Detection",
-    menu_items={
-        'Get Help': None,
-        'Report a bug': None,
-        'About': None
-    }
-)
+st.set_page_config(page_title="Brain Tumor Detection")
 
 # Streamlit App
 st.header("Top G Brain Tumor App 🧠")
