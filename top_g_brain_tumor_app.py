@@ -65,7 +65,7 @@ if uploaded_files:
 
 input_text = st.text_input("Input prompt:", key="input")
 
-submit = st.button("Tell me about the tumor")
+submit = st.button("Analyze MRI Images..")
 
 if submit:
     if not uploaded_files:
