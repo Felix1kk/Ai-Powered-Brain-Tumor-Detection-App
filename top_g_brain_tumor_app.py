@@ -18,7 +18,12 @@ from PIL import Image
 
 st.set_page_config(
     page_title="Brain Tumor Detection",
-    page_icon="🧠"
+    page_icon="🧠",
+    menu_items={
+        'Get Help': None,
+        'Report a bug': None,
+        'About': None
+    }
 )
 
 # Custom CSS to hide GitHub and Fork icons
