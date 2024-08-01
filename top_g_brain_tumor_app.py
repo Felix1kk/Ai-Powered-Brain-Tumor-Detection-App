@@ -63,7 +63,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Streamlit App Configuration
 
-#st.set_page_config(page_title="Brain Tumor Detection")
+
 st.set_page_config(
     page_title="Brain Tumor Detection",
     menu_items={
