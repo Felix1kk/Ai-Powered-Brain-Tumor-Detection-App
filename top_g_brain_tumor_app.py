@@ -24,7 +24,7 @@ st.set_page_config(
 # Custom CSS to hide GitHub and Fork icons
 hide_streamlit_style = """
 <style>
-#MainMenu {visibility: hidden;}
+
 footer {visibility: hidden;}
 header {visibility: hidden;}
 </style>
