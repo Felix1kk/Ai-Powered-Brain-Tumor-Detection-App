@@ -14,6 +14,28 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
+# Streamlit App Configuration
+
+st.set_page_config(
+    page_title="Brain Tumor Detection",
+    page_icon="🧠"
+)
+
+# Custom CSS to hide GitHub and Fork icons
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+</style>
+"""
+
+# Inject custom CSS
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+# Streamlit App
+st.header("Top G Brain Tumor App 🧠")
+
 # Configuration
 API_KEY = 'AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
 MODEL_NAME = 'gemini-1.5-flash'
@@ -50,21 +72,6 @@ def input_image_setup(uploaded_files):
     else:
         raise FileNotFoundError("No files uploaded")
 
-
-# Streamlit App Configuration
-st.set_page_config(
-    page_title="Brain Tumor Detection",
-    page_icon="🧠",
-    menu_items={
-        'Get Help': None,
-        'Report a bug': None,
-        'About': None
-    }
-
-)
-
-# Streamlit App
-st.header("Top G Brain Tumor App 🧠")
 
 uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
