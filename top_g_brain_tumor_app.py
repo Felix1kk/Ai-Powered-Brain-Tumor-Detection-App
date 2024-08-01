@@ -51,6 +51,18 @@ def input_image_setup(uploaded_files):
         raise FileNotFoundError("No files uploaded")
 
 
+# Custom CSS to hide GitHub and Fork icons
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+</style>
+"""
+
+# Inject custom CSS
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 # Streamlit App Configuration
 st.set_page_config(page_title="Brain Tumor Detection")
 
