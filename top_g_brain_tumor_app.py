@@ -31,10 +31,12 @@ chat = model.start_chat(history=[])
 
 # Functions
 
+# instantiating the gemini model 
 def get_gemini_response(input_text, images, prompt):
     response = model.generate_content([input_text] + images + [prompt])
     return response.text
 
+# creating a function to load images properly
 def input_image_setup(uploaded_files):
     if uploaded_files:
         image_parts = [
