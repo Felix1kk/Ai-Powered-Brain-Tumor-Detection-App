@@ -33,6 +33,7 @@ hide_streamlit_style = """
 footer {visibility: hidden;}
 header {visibility: hidden;}
 .stApp {padding-top: 0;}
+.stMetric {display: none;}  /* Hide the Streamlit logo */
 </style>
 """
 
