@@ -32,12 +32,12 @@ def create_pdf(report_texts, images):
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(name='Title', fontSize=24, leading=28, spaceAfter=12, alignment=1)  # Centered title
     elements.append(Paragraph("Brain Tumor Analysis Report", title_style))
+    elements.append(Spacer(1, 24))  # Add a small spacer after the title
 
     normal_style = ParagraphStyle(name='Normal', fontSize=14, leading=18, spaceAfter=12)
 
     # Add sections for each image and corresponding report text
     for i, (report_text, image_data) in enumerate(zip(report_texts, images)):
-        elements.append(PageBreak())
         elements.append(Paragraph(f"Image {i+1}", normal_style))
         
         # Add the image
@@ -51,7 +51,10 @@ def create_pdf(report_texts, images):
         
         # Add the corresponding report text
         elements.append(Paragraph(report_text, normal_style))
-        elements.append(Spacer(1, 12))
+        elements.append(Spacer(1, 24))  # Add a spacer between different sections
+
+        if i < len(report_texts) - 1:
+            elements.append(PageBreak())  # Add page break between different image reports
 
     # Build PDF
     doc.build(elements)
