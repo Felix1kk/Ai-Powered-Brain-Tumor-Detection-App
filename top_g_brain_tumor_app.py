@@ -33,7 +33,7 @@ def create_pdf(report_texts, images):
     title_style = ParagraphStyle(name='Title', fontSize=24, leading=28, spaceAfter=12, alignment=1)  # Centered title
     elements.append(Paragraph("Brain Tumor Analysis Report", title_style))
 
-    normal_style = ParagraphStyle(name='Normal', fontSize=12, leading=14, spaceAfter=12)
+    normal_style = ParagraphStyle(name='Normal', fontSize=14, leading=18, spaceAfter=12)
 
     # Add sections for each image and corresponding report text
     for i, (report_text, image_data) in enumerate(zip(report_texts, images)):
@@ -45,6 +45,9 @@ def create_pdf(report_texts, images):
         image_path = f"/tmp/temp_image_{i}.png"
         image.save(image_path)
         elements.append(RLImage(image_path, width=4*inch, height=4*inch))
+        
+        # Add a spacer between the image and the text
+        elements.append(Spacer(1, 12))
         
         # Add the corresponding report text
         elements.append(Paragraph(report_text, normal_style))
