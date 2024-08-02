@@ -21,7 +21,23 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Image as RLImage, S
 import io
 
 # Streamlit App Configuration
-st.set_page_config(page_title="Brain Tumor Detection")  # Move this to the top
+st.set_page_config(
+    page_title="Brain Tumor Detection",
+    page_icon="🧠"
+)
+
+# Custom CSS to hide Streamlit icon, GitHub, and Fork icons
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+.stApp {padding-top: 0;}
+</style>
+"""
+
+# Inject custom CSS
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Function to create PDF report
 def create_pdf(report_texts, images):
@@ -71,18 +87,6 @@ def create_pdf(report_texts, images):
 
     return buffer
 
-# Custom CSS to hide Streamlit icon, GitHub, and Fork icons
-hide_streamlit_style = """
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-.stApp {padding-top: 0;}
-</style>
-"""
-
-# Inject custom CSS
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Configuration
 API_KEY = 'AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
