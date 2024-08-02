@@ -16,25 +16,30 @@ import google.generativeai as genai
 from PIL import Image
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
 import io
 
 # Function to create PDF report
-def create_pdf(report_text):
+def create_pdf(report_text, images):
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
     c.drawString(100, height - 100, "Brain Tumor Analysis Report")
     c.drawString(100, height - 120, "Analysis Results:")
     c.drawString(100, height - 140, report_text)
+    y_position = height - 160
+    for i, image_data in enumerate(images):
+        image = Image.open(io.BytesIO(image_data['data']))
+        image_path = f"/tmp/temp_image_{i}.png"
+        image.save(image_path)
+        c.drawImage(image_path, 100, y_position - 2*inch, width=4*inch, height=4*inch)
+        y_position -= 4.5*inch
     c.save()
     buffer.seek(0)
     return buffer
 
 # Streamlit App Configuration
-st.set_page_config(
-    page_title="Brain Tumor Detection",
-    page_icon="🧠"
-)
+st.set_page_config(page_title="Brain Tumor Detection")
 
 # Custom CSS to hide Streamlit icon, GitHub, and Fork icons
 hide_streamlit_style = """
@@ -115,7 +120,7 @@ if submit:
                 st.write(response)
 
                 # Generate and provide the PDF download
-                pdf_buffer = create_pdf(response)
+                pdf_buffer = create_pdf(response, image_data)
                 st.download_button(
                     label="Download Report as PDF",
                     data=pdf_buffer,
@@ -126,6 +131,7 @@ if submit:
             st.error(f"File not found: {e}")
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
+
  
 # 
 # 
