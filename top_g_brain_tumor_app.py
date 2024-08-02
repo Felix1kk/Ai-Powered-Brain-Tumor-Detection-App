@@ -10,21 +10,36 @@ Original file is located at
 
 # Commented out IPython magic to ensure Python compatibility.
 
+
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import io
+
+# Function to create PDF report
+def create_pdf(report_text):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    c.drawString(100, height - 100, "Brain Tumor Analysis Report")
+    c.drawString(100, height - 120, "Analysis Results:")
+    c.drawString(100, height - 140, report_text)
+    c.save()
+    buffer.seek(0)
+    return buffer
 
 # Streamlit App Configuration
-
 st.set_page_config(
     page_title="Brain Tumor Detection",
     page_icon="🧠"
 )
 
-# Custom CSS to hide GitHub and Fork icons
+# Custom CSS to hide Streamlit icon, GitHub, and Fork icons
 hide_streamlit_style = """
 <style>
-
+#MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 .stApp {padding-top: 0;}
@@ -33,9 +48,6 @@ header {visibility: hidden;}
 
 # Inject custom CSS
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-# Streamlit App
-st.header("Top G Brain Tumor App 🧠")
 
 # Configuration
 API_KEY = 'AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
@@ -48,18 +60,22 @@ and you will describe any visual features that might indicate abnormalities or t
 Please focus on describing shapes, spots, patterns, or any unusual characteristics you observe.
 """
 
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel(MODEL_NAME)
-chat = model.start_chat(history=[])
+# Set up the generative AI model
+try:
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel(MODEL_NAME)
+except Exception as e:
+    st.error(f"Error configuring the model: {e}")
 
 # Functions
-
-# instantiating the gemini model 
 def get_gemini_response(input_text, images, prompt):
-    response = model.generate_content([input_text] + images + [prompt])
-    return response.text
+    try:
+        response = model.generate_content([input_text] + images + [prompt])
+        return response.text
+    except Exception as e:
+        st.error(f"Error generating content: {e}")
+        return None
 
-# creating a function to load images properly
 def input_image_setup(uploaded_files):
     if uploaded_files:
         image_parts = [
@@ -73,6 +89,8 @@ def input_image_setup(uploaded_files):
     else:
         raise FileNotFoundError("No files uploaded")
 
+# Streamlit App
+st.header("Top G Brain Tumor App 🧠")
 
 uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
@@ -92,10 +110,22 @@ if submit:
         try:
             image_data = input_image_setup(uploaded_files)
             response = get_gemini_response(input_text, image_data, INPUT_PROMPT)
-            st.subheader("The Response is")
-            st.write(response)
+            if response:
+                st.subheader("The Response is")
+                st.write(response)
+
+                # Generate and provide the PDF download
+                pdf_buffer = create_pdf(response)
+                st.download_button(
+                    label="Download Report as PDF",
+                    data=pdf_buffer,
+                    file_name="brain_tumor_analysis_report.pdf",
+                    mime="application/pdf"
+                )
+        except FileNotFoundError as e:
+            st.error(f"File not found: {e}")
         except Exception as e:
-            st.error(f"An error occurred: {e}")
+            st.error(f"An unexpected error occurred: {e}")
  
 # 
 # 
