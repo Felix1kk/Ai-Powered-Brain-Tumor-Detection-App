@@ -3,3 +3,4 @@ google_generativeai
 
 reportlab
 pillow
+streamlit-drawable-canvas
