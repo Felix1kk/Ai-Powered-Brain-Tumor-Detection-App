@@ -17,6 +17,8 @@ from PIL import Image
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Paragraph, Frame
 import io
 
 # Function to create PDF report
@@ -24,18 +26,35 @@ def create_pdf(report_text, images):
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
-    c.drawString(100, height - 100, "Brain Tumor Analysis Report")
-    c.drawString(100, height - 120, "Analysis Results:")
-    c.drawString(100, height - 140, report_text)
-    y_position = height - 160
+
+    # Add title header
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(100, height - 80, "Brain Tumor Analysis Report")
+
+    # Set up styles
+    styles = getSampleStyleSheet()
+    normal_style = styles["Normal"]
+    normal_style.fontSize = 12
+    normal_style.leading = 14
+
+    # Create a frame for the report text
+    frame = Frame(100, height - 240, width - 200, 120, showBoundary=0)
+    report_paragraph = Paragraph(report_text, normal_style)
+    frame.addFromList([report_paragraph], c)
+
+    # Add MRI images to the PDF
+    y_position = height - 360  # Starting position for images
     for i, image_data in enumerate(images):
         image = Image.open(io.BytesIO(image_data['data']))
         image_path = f"/tmp/temp_image_{i}.png"
         image.save(image_path)
         c.drawImage(image_path, 100, y_position - 2*inch, width=4*inch, height=4*inch)
         y_position -= 4.5*inch
+
+    # Save the PDF
     c.save()
     buffer.seek(0)
+
     return buffer
 
 # Streamlit App Configuration
