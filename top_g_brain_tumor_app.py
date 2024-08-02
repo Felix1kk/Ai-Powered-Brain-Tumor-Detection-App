@@ -16,12 +16,12 @@ import google.generativeai as genai
 from PIL import Image
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Image as RLImage
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Image as RLImage, Spacer, PageBreak
 import io
 
 # Function to create PDF report
-def create_pdf(report_text, images):
+def create_pdf(report_texts, images):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
 
@@ -30,20 +30,25 @@ def create_pdf(report_text, images):
 
     # Add title header
     styles = getSampleStyleSheet()
-    title_style = styles["Title"]
+    title_style = ParagraphStyle(name='Title', fontSize=24, leading=28, spaceAfter=12, alignment=1)  # Centered title
     elements.append(Paragraph("Brain Tumor Analysis Report", title_style))
 
-    # Add report text
-    normal_style = styles["Normal"]
-    elements.append(Paragraph(report_text, normal_style))
+    normal_style = ParagraphStyle(name='Normal', fontSize=12, leading=14, spaceAfter=12)
 
-    # Add MRI images to the PDF
-    for i, image_data in enumerate(images):
+    # Add sections for each image and corresponding report text
+    for i, (report_text, image_data) in enumerate(zip(report_texts, images)):
+        elements.append(PageBreak())
+        elements.append(Paragraph(f"Image {i+1}", normal_style))
+        
+        # Add the image
         image = Image.open(io.BytesIO(image_data['data']))
         image_path = f"/tmp/temp_image_{i}.png"
         image.save(image_path)
-        elements.append(Paragraph(f"Image {i+1}", normal_style))
         elements.append(RLImage(image_path, width=4*inch, height=4*inch))
+        
+        # Add the corresponding report text
+        elements.append(Paragraph(report_text, normal_style))
+        elements.append(Spacer(1, 12))
 
     # Build PDF
     doc.build(elements)
@@ -88,8 +93,11 @@ except Exception as e:
 # Functions
 def get_gemini_response(input_text, images, prompt):
     try:
-        response = model.generate_content([input_text] + images + [prompt])
-        return response.text
+        responses = []
+        for image in images:
+            response = model.generate_content([input_text, image, prompt])
+            responses.append(response.text)
+        return responses
     except Exception as e:
         st.error(f"Error generating content: {e}")
         return None
@@ -119,7 +127,7 @@ if uploaded_files:
 
 input_text = st.text_input("Input prompt:", key="input")
 
-submit = st.button("Analyze MRI Images..")
+submit = st.button("Analyze MRI Images")
 
 if submit:
     if not uploaded_files:
@@ -127,13 +135,15 @@ if submit:
     else:
         try:
             image_data = input_image_setup(uploaded_files)
-            response = get_gemini_response(input_text, image_data, INPUT_PROMPT)
-            if response:
-                st.subheader("The Response is")
-                st.write(response)
+            responses = get_gemini_response(input_text, image_data, INPUT_PROMPT)
+            if responses:
+                st.subheader("The Responses are")
+                for i, response in enumerate(responses):
+                    st.write(f"Response for Image {i+1}:")
+                    st.write(response)
 
                 # Generate and provide the PDF download
-                pdf_buffer = create_pdf(response, image_data)
+                pdf_buffer = create_pdf(responses, image_data)
                 st.download_button(
                     label="Download Report as PDF",
                     data=pdf_buffer,
