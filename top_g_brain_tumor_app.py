@@ -12,6 +12,7 @@ Original file is located at
 
 
 import streamlit as st
+from streamlit_drawable_canvas import st_canvas
 import google.generativeai as genai
 from PIL import Image
 from reportlab.lib.pagesizes import letter
@@ -116,6 +117,19 @@ if uploaded_files:
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
         st.image(image, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
+
+        # Interactive Canvas for Annotation
+        canvas_result = st_canvas(
+            fill_color="rgba(255, 165, 0, 0.3)",
+            stroke_width=3,
+            stroke_color="rgba(0, 0, 0, 0.5)",
+            background_image=image,
+            update_streamlit=True,
+            height=400,
+            width=400,
+            drawing_mode="rect",
+            key=f"canvas_{uploaded_file.name}"
+        )
 
 input_text = st.text_input("Input prompt:", key="input")
 
