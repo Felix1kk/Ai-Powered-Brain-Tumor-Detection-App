@@ -15,10 +15,9 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import Paragraph, Frame, SimpleDocTemplate
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Image as RLImage
 import io
 
 # Function to create PDF report
@@ -44,7 +43,7 @@ def create_pdf(report_text, images):
         image_path = f"/tmp/temp_image_{i}.png"
         image.save(image_path)
         elements.append(Paragraph(f"Image {i+1}", normal_style))
-        elements.append(Image(image_path, width=4*inch, height=4*inch))
+        elements.append(RLImage(image_path, width=4*inch, height=4*inch))
 
     # Build PDF
     doc.build(elements)
