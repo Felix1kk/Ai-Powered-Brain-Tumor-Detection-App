@@ -169,10 +169,10 @@ if submit:
                         file_name="brain_tumor_analysis_report.pdf",
                         mime="application/pdf"
                     )
-        except FileNotFoundError as e:
-            st.error(f"File not found: {e}")
-        except Exception as e:
-            st.error(f"An unexpected error occurred: {e}")
+            except FileNotFoundError as e:
+                st.error(f"File not found: {e}")
+            except Exception as e:
+                st.error(f"An unexpected error occurred: {e}")
  
 # 
 # 
