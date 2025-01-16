@@ -91,7 +91,8 @@ def create_pdf(report_texts, images):
 
 
 # Configuration
-API_KEY = 'AIzaSyAyGrTbjkU6cGEVSOZB5z4E044GuNY4Z-Q'
+
+API_KEY = st.secrets['gemini']['API_KEY']
 MODEL_NAME = 'gemini-1.5-flash'
 
 INPUT_PROMPT = """
