@@ -141,7 +141,7 @@ uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"
 if uploaded_files:
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
-        st.image(image, caption=f"Uploaded Image: {uploaded_file.name}", use_column_width=True)
+        st.image(image, caption=f"Uploaded Image: {uploaded_file.name}", use_container_width=True)
 
 input_text = st.text_input("Input prompt:", key="input")
 
@@ -151,23 +151,24 @@ if submit:
     if not uploaded_files:
         st.info("Please upload at least one image")
     else:
-        try:
-            image_data = input_image_setup(uploaded_files)
-            responses = get_gemini_response(input_text, image_data, INPUT_PROMPT)
-            if responses:
-                st.subheader("The Responses are")
-                for i, response in enumerate(responses):
-                    st.write(f"Response for Image {i+1}:")
-                    st.write(response)
-
-                # Generate and provide the PDF download
-                pdf_buffer = create_pdf(responses, image_data)
-                st.download_button(
-                    label="Download Report as PDF",
-                    data=pdf_buffer,
-                    file_name="brain_tumor_analysis_report.pdf",
-                    mime="application/pdf"
-                )
+        with st.spinner("Analyzing images, please wait..."):
+            try:
+                image_data = input_image_setup(uploaded_files)
+                responses = get_gemini_response(input_text, image_data, INPUT_PROMPT)
+                if responses:
+                    st.subheader("The Responses are")
+                    for i, response in enumerate(responses):
+                        st.write(f"Response for Image {i+1}:")
+                        st.write(response)
+    
+                    # Generate and provide the PDF download
+                    pdf_buffer = create_pdf(responses, image_data)
+                    st.download_button(
+                        label="Download Report as PDF",
+                        data=pdf_buffer,
+                        file_name="brain_tumor_analysis_report.pdf",
+                        mime="application/pdf"
+                    )
         except FileNotFoundError as e:
             st.error(f"File not found: {e}")
         except Exception as e:
